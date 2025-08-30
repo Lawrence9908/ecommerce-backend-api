@@ -41,11 +41,11 @@ const userSchema = new mongoose.Schema({
     }
 );
 
-userSchema.pre("save", async (next) => {
+userSchema.pre("save", async function (next) {
     if (!this.isModified("password")) return next();
 
     try {
-        const salt = await bcrypt.getSalt(10);
+        const salt = await bcrypt.genSalt(10);
         this.password = await bcrypt.hash(this.password, salt);
         next();
     } catch (error) {
@@ -53,7 +53,7 @@ userSchema.pre("save", async (next) => {
     }
 });
 
-userSchema.methods.comparePassword = async (password) => {
+userSchema.methods.comparePassword = async function (password) {
     return bcrypt.compare(password, this.password);
 };
 
